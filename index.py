@@ -1,6 +1,13 @@
 from App import *
 from APIs.sensor import *
 from APIs.user_authentication import *
+from APIs.stats import *
+from Admin.sensor_module import *
+
+
+
+
+
 
 
 
@@ -16,10 +23,10 @@ def not_found(error):
 
 
 if __name__ == '__main__':
-    try:
+    # try:
         app.run(debug=True,host='0.0.0.0', port=8001)
         mongodb_connection.close()
-    except:
-        pass
-    finally:
-        mongodb_connection.close()
+    # except:
+    #     pass
+    # finally:
+    #     mongodb_connection.close()

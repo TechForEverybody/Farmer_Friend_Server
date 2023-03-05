@@ -3,10 +3,9 @@ from Database.schema import *
 import hashlib
 import datetime
 import bson.json_util
-import bson.objectid
+from Modules.validate_id import *
 
 app = Flask(__name__)
-module_keys=["93a77eb3-856c-49fc-8a6d-44a7e822f25f"]
 app.secret_key="SHIVKUMAR_CHAUHAN"
 
 

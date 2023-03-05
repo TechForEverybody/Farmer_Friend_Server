@@ -3,6 +3,15 @@ from App import *
 @app.route("/authenticate_user",methods=["POST","GET"])
 def authenticateUser():
     if isPostMethod():
+        request_measure=stats.find({"ip_address":request.remote_addr},{"_id":0,"ip_address":0})
+        request_measure=[i for i in request_measure]
+        if len(request_measure)==0:
+            stats.insert_one({"ip_address":request.remote_addr,"visit_count":1})
+            stats.update_one({"_id":bson.objectid.ObjectId("64042f655a893bec111c047a")},{"$inc":{"requests_day":1}})
+            stats.update_one({"_id":bson.objectid.ObjectId("64042f655a893bec111c047a")},{"$inc":{"visits_day":1}})
+        else:
+            stats.update_one({"ip_address":request.remote_addr},{"$inc":{"visit_count":1}})
+            stats.update_one({"_id":bson.objectid.ObjectId("64042f655a893bec111c047a")},{"$inc":{"visits_day":1}})
         if isLoggedIn():
             return jsonify({
                 "response":{
@@ -44,7 +53,7 @@ def register():
         number=request.json['phone']
         email=request.json['email']
         password=request.json['password']
-        user=users.find_one({"email":email,"password":getHashValue(password)},{"password":0})
+        user=users.find_one({"$or":[{"email":email},{"number":number}]},{"password":0})
         if user:
             return jsonify({"response":"User Already Exists"}),400
         password=getHashValue(password)
@@ -62,6 +71,7 @@ def register():
         session['id']=str(user.inserted_id)
         session['is_login']=True
         session['detection_chances']=5
+        stats.update_one({"_id":bson.objectid.ObjectId("64042f655a893bec111c047a")},{"$inc":{"users_count":1}})
         return jsonify({"response":{
             "name":session['name'],
             "id":session['id'],
