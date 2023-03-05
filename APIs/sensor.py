@@ -37,7 +37,7 @@ def get_sensor_data(iot_module_id):
 def get_recent_sensor_data(iot_module_id):
     if not validate_id(iot_module_id):
         return jsonify({"response":"Invalid keys"}),404
-    pre_check_data=iot_modules.find({"_id":bson.objectid.ObjectId(iot_module_id),"owner_id":owner_id})
+    pre_check_data=iot_modules.find({"_id":bson.objectid.ObjectId(iot_module_id)})
     pre_check_data=[i for i in pre_check_data]
     if len(pre_check_data)>0:
         data=sensors_data.find({"iot_module_id":iot_module_id},{"_id":0}).limit(1).sort("_id",-1)
