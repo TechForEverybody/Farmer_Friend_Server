@@ -34,7 +34,7 @@ def get_sensor_data(iot_module_id):
     return jsonify({"response":"No data Found"})
 
 @app.route('/get_recent_sensor_data/<iot_module_id>')
-def get_recent_sensor_data(owner_id,iot_module_id):
+def get_recent_sensor_data(iot_module_id):
     if not validate_id(iot_module_id):
         return jsonify({"response":"Invalid keys"}),404
     pre_check_data=iot_modules.find({"_id":bson.objectid.ObjectId(iot_module_id),"owner_id":owner_id})
