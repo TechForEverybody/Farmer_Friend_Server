@@ -4,10 +4,12 @@ import hashlib
 import datetime
 import bson.json_util
 from Modules.validate_id import *
+from flask_cors import CORS
+
 
 app = Flask(__name__)
 app.secret_key="SHIVKUMAR_CHAUHAN"
-
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 def isPostMethod():
     if request.method=="POST":return True
