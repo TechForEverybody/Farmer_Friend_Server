@@ -17,16 +17,9 @@ def not_found(error):
 
 
 
-@app.route("/.well-known/pki-validation/459AFDA2ACCA7D1050E07795390251C5.txt")
-def letsencrypt():
-    return send_from_directory(directory="./Data",path="459AFDA2ACCA7D1050E07795390251C5.txt")
-
-
-
-
 if __name__ == '__main__':
     # try:
-        app.run(debug=True,host='0.0.0.0', port=80)
+        app.run(debug=True,host='0.0.0.0', port=80, ssl_context='adhoc')
         mongodb_connection.close()
     # except:
     #     pass
