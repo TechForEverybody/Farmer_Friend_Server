@@ -17,9 +17,9 @@ def not_found(error):
 
 
 
-@app.route("/.well-known/pki-validation/2C49D2E6F4A2ACFE0CD54D7C1E486D81.txt")
+@app.route("/.well-known/pki-validation/8A9C09B54AC668091E8575B440EB2ECB.txt")
 def letsencrypt():
-    return send_from_directory(directory="./Data",path="2C49D2E6F4A2ACFE0CD54D7C1E486D81.txt")
+    return send_from_directory(directory="./Data",path="8A9C09B54AC668091E8575B440EB2ECB.txt")
 
 
 
