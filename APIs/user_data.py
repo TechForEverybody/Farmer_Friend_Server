@@ -45,19 +45,21 @@ def getIrrigationData():
     if isPostMethod():
         if isLoggedIn():
             iot_module_id=request.json["module_id"]
-            irrigation_data=sensors_data.find({"iot_module_id":iot_module_id},{"temperature":1,"humidity":1,"soil_moisture":1,"_id":0}).limit(10)
+            irrigation_data=sensors_data.find({"iot_module_id":iot_module_id},{"temperature":1,"humidity":1,"soil_moisture":1,"_id":0,"timestamp":1}).limit(10)
             irrigation_data=[i for i in irrigation_data]
             module_data=iot_modules.find({"_id":bson.objectid.ObjectId(iot_module_id)},{"_id":0,"owner_id":0})
             module_data=[i for i in module_data]
             temperature_data=[i['temperature'] for i in irrigation_data]
             humidity_data=[i['humidity'] for i in irrigation_data]
             soil_moisture_data=[i['soil_moisture'] for i in irrigation_data]
+            time_stamp=[i['timestamp'] for i in irrigation_data]
             final_data={
                 "module_data":module_data,
                 "irrigation_data":{
                     "temperature_data":temperature_data,
                     "humidity_data":humidity_data,
-                    "soil_moisture_data":soil_moisture_data
+                    "soil_moisture_data":soil_moisture_data,
+                    "time_stamps":time_stamp
                 }
             }
             print(final_data)

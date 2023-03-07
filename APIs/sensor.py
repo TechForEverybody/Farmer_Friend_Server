@@ -1,10 +1,10 @@
 from App import *
 
-@app.route('/save_sensor_data/<iot_module_id>/<float:temperature>/<float:humidity>/<float:moisture>')
-def save_sensor_data(iot_module_id,temperature,humidity,moisture):
+@app.route('/save_sensor_data/<sensor_key>/<iot_module_id>/<float:temperature>/<float:humidity>/<float:moisture>')
+def save_sensor_data(sensor_key,iot_module_id,temperature,humidity,moisture):
     if not validate_id(iot_module_id):
         return jsonify({"response":"Invalid keys"}),404
-    pre_check_data=iot_modules.find({"_id":bson.objectid.ObjectId(iot_module_id)})
+    pre_check_data=iot_modules.find({"_id":bson.objectid.ObjectId(iot_module_id),"sensor_key":sensor_key})
     pre_check_data=[i for i in pre_check_data]
     if len(pre_check_data)>0:
         sensors_data_instance={
