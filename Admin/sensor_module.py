@@ -1,3 +1,4 @@
+
 from App import *
 
 @app.route("/add_module",methods=["POST","GET"])
@@ -7,7 +8,8 @@ def addModule():
         iot_module_details={
             "pump_status":"OFF",
             "number_of_sensors":number_of_sensors,
-            "created_at":str(datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+            "created_at":str(datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")),
+            "sensor_key":str(uuid.uuid4())[:8],
         }
         iot_module_id=iot_modules.insert_one(iot_module_details).inserted_id
         return jsonify({"response":str(iot_module_id)})
