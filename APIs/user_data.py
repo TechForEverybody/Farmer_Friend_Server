@@ -5,7 +5,7 @@ from App import *
 def getDashboardData():
     if isPostMethod():
         if isLoggedIn():
-            initial_data=iot_modules.find({"owner_id":session['id']})
+            initial_data=iot_modules.find({"owner_id":session['id']},{"senor_key":0})
             initial_data=[i for i in initial_data]
             number_of_sensors=sum([i['number_of_sensors'] for i in initial_data])
             iot_modules_list=[str(i['_id']) for i in initial_data]
@@ -47,7 +47,7 @@ def getIrrigationData():
             iot_module_id=request.json["module_id"]
             irrigation_data=sensors_data.find({"iot_module_id":iot_module_id},{"temperature":1,"humidity":1,"soil_moisture":1,"_id":0,"timestamp":1}).limit(10)
             irrigation_data=[i for i in irrigation_data]
-            module_data=iot_modules.find({"_id":bson.objectid.ObjectId(iot_module_id)},{"_id":0,"owner_id":0})
+            module_data=iot_modules.find({"_id":bson.objectid.ObjectId(iot_module_id)},{"_id":0,"owner_id":0,"sensor_key":0})
             module_data=[i for i in module_data]
             temperature_data=[i['temperature'] for i in irrigation_data]
             humidity_data=[i['humidity'] for i in irrigation_data]
