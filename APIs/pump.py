@@ -1,14 +1,16 @@
 from App import *
 
-@app.route("/check_pump_status")
-def checkPumpStatus():
-    iot_module_id=request.json['iot_module_id']
+@app.route("/check_pump_status/<iot_module_id>")
+def checkPumpStatus(iot_module_id):
     if not validate_id(iot_module_id):
         return jsonify({"response":"Invalid keys"}),404
     pre_check_data=iot_modules.find({"_id":bson.objectid.ObjectId(iot_module_id)})
     pre_check_data=[i for i in pre_check_data]
     if len(pre_check_data)>0:
-        return jsonify({"response":pre_check_data[0]['pump_status']})
+        if pre_check_data[0]['pump_status']=="ON":
+            return jsonify({"response":"ON"}),201
+        else:
+            return jsonify({"response":"OFF"}),202
     else:
         return jsonify({"response":"Invalid keys"}),404
 
