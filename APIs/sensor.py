@@ -31,21 +31,25 @@ def save_sensor_data(sensor_key,iot_module_id,temperature,humidity,moisture):
             "iot_module_id": iot_module_id,
             "timestamp":str(datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
         }
-        if moisture>threshold_counter:
+        if moisture>pre_check_data[0]['soil_moisture_threshold']:
+            print(f"time to on the pump {threshold_counter}")
             if pre_check_data[0]['pump_status']=="ON":
                 if threshold_counter<3 and threshold_counter>0:
                     threshold_counter==3
             else:
                 if threshold_counter>3:
+                    print("pump turned on")
                     changePumpStatus_Automated(iot_module_id,"ON")
                 else:
                     threshold_counter+=1
         else:
+            print(f"time to on the pump {threshold_counter}")
             if pre_check_data[0]['pump_status']=="OFF":
                 if threshold_counter>0:
                     threshold_counter==0
             else:
                 if threshold_counter<=0:
+                    print("pump Turned off")
                     changePumpStatus(iot_module_id,"OFF")
                 else:
                     if pre_check_data[0]['pump_status']=="ON":
