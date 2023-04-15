@@ -3,8 +3,10 @@ from App import *
 
 @app.route("/get_dashboard_data",methods=["POST","GET"])
 def getDashboardData():
+    print("hello dashboard")
     if isPostMethod():
         if isLoggedIn():
+            print("logged in")
             initial_data=iot_modules.find({"owner_id":session['id']},{"senor_key":0})
             initial_data=[i for i in initial_data]
             number_of_sensors=sum([i['number_of_sensors'] for i in initial_data])
@@ -42,12 +44,17 @@ def getDashboardData():
 
 @app.route("/get_irrigation_data",methods=["POST","GET"])
 def getIrrigationData():
+    global start_limit,start_trails
     if isPostMethod():
         if isLoggedIn():
             iot_module_id=request.json["module_id"]
-            irrigation_data=sensors_data.find({"iot_module_id":iot_module_id,"owner_id":session['id']},{"temperature":1,"humidity":1,"soil_moisture":1,"_id":0,"timestamp":1}).limit(25).sort("_id",-1)
+            irrigation_data=sensors_data.find({"iot_module_id":iot_module_id},{"temperature":1,"humidity":1,"soil_moisture":1,"_id":0,"timestamp":1}).limit(25).sort("_id",-1)
             irrigation_data=[i for i in irrigation_data]
-            module_data=iot_modules.find({"_id":bson.objectid.ObjectId(iot_module_id)},{"_id":0,"owner_id":0,"sensor_key":0})
+            # print(irrigation_data)
+            
+            # print(irrigation_data)
+            module_data=iot_modules.find({"_id":bson.objectid.ObjectId(iot_module_id),"owner_id":session['id']},{"_id":0,"owner_id":0,"sensor_key":0})
+            
             module_data=[i for i in module_data]
             temperature_data=[i['temperature'] for i in irrigation_data]
             temperature_data.reverse()
@@ -59,6 +66,21 @@ def getIrrigationData():
             time_stamp.reverse()
             data=sensors_data.find({"iot_module_id":iot_module_id},{"_id":0,"iot_module_id":0}).limit(1).sort("_id",-1)
             data=[i for i in data]
+            print(data)
+            # if start_limit<int(data[0]['soil_moisture']):
+            #     print("Pump Needs to be On")
+            #     if start_trails>2:
+            #         print("pump is turning on")
+            #         alterPumpStatus(iot_module_id,"ON")
+            #     else:
+            #         start_trails+=1
+            # else:
+            #     print("pump needs to be off")
+            #     if start_trails==0:
+            #         print("pump is turning off")
+            #         alterPumpStatus(iot_module_id,"OFF")
+            #     else:
+            #         start_trails-=1
             final_data={
                 "module_data":module_data,
                 "recent_data":data[0] if len(data)>0 else "No data",
@@ -69,7 +91,7 @@ def getIrrigationData():
                     "time_stamps":time_stamp
                 }
             }
-            print(final_data)
+            # print(final_data)
             return jsonify({
                 "response":final_data
             })

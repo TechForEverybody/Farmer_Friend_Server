@@ -1,7 +1,32 @@
 from App import *
 
+def setInitialTrialValues():
+    if session['ip_address']!=request.remote_addr:
+        session['crop_detection']=0
+        session['disease_detection']=0
+        return
+    try:
+        if session['crop_detection']<5:
+            pass
+    except:
+        session['crop_detection']=0
+    try:
+        if session['disease_detection']<5:
+            pass
+    except:
+        session['disease_detection']=0
+
+def setIpAddress():
+    try:
+        if session['ip_address']:
+            pass
+    except:
+        session['ip_address']=request.remote_addr
+
 @app.route("/authenticate_user",methods=["POST","GET"])
 def authenticateUser():
+    setIpAddress()
+    setInitialTrialValues()
     if isPostMethod():
         request_measure=stats.find({"ip_address":request.remote_addr},{"_id":0,"ip_address":0})
         request_measure=[i for i in request_measure]
@@ -17,22 +42,31 @@ def authenticateUser():
                 "response":{
                     "name":session['name'],
                     "id":session['id'],
-                    "detection_chances":session['detection_chances']
+                    "detection_chances":{
+                        "crop_detection":str(session['crop_detection']),
+                        "disease_detection":str(session['disease_detection'])
+                    }
                 }
-            })
+            }),200
         else: return jsonify({
-            "response":"Authentication Required"
+            "response":"Authentication Required",
+            "detection_chances":{
+                "crop_detection":str(session['crop_detection']),
+                "disease_detection":str(session['disease_detection'])
+            }
         }),401
     else:
         return jsonify({"response":"Request not allowed"}),403
 
 @app.route("/login",methods=["POST","GET"])
 def login():
+    "login is requested"
     if isPostMethod():
         email=request.json['email']
         password=request.json['password']
         user=users.find_one({"email":email,"password":getHashValue(password)},{"password":0})
         if user:
+            print("Logged in")
             session['name']=user['name']
             session['id']=str(user['_id'])
             session['is_login']=True

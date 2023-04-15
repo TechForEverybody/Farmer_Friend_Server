@@ -7,10 +7,12 @@
 <hr>
 <h3>Created by :</h3>
 <ul>
+    <li style="color: red; font-weight: bolder;">NAIKDHURE NEHA RAJENDRA</li>
+    <li style="color: aqua;font-weight: bolder;">RAWAT NISHA PRADEEPSINGH</li>
+    <li style="color: green;font-weight: bolder;">INGALE MAYUR TATYASO</li>
     <li>SHIVKUMAR G. CHAUHAN</li>
 </ul>
 <hr>
-
 ## Current Folder Structure
 <pre style="line-height: 20px;">
 📦backend

@@ -1,4 +1,21 @@
 from App import *
+from .pump import *
+threshold_counter=0;
+last_operation=1;
+
+
+
+
+def changePumpStatus_Automated(iot_module_id,pump_status):
+    if not validate_id(iot_module_id):
+        return jsonify({"response":"Invalid keys"}),404
+    pre_check_data=iot_modules.find({"_id":bson.objectid.ObjectId(iot_module_id)})
+    pre_check_data=[i for i in pre_check_data]
+    if len(pre_check_data)>0:
+        iot_modules.update_one({"_id":bson.objectid.ObjectId(iot_module_id)},{"$set":{"pump_status":pump_status}})
+        return True
+    else:
+        return False
 
 @app.route('/save_sensor_data/<sensor_key>/<iot_module_id>/<float:temperature>/<float:humidity>/<float:moisture>')
 def save_sensor_data(sensor_key,iot_module_id,temperature,humidity,moisture):
@@ -14,6 +31,26 @@ def save_sensor_data(sensor_key,iot_module_id,temperature,humidity,moisture):
             "iot_module_id": iot_module_id,
             "timestamp":str(datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
         }
+        if moisture>threshold_counter:
+            if pre_check_data[0]['pump_status']=="ON":
+                if threshold_counter<3 and threshold_counter>0:
+                    threshold_counter==3
+            else:
+                if threshold_counter>3:
+                    changePumpStatus_Automated(iot_module_id,"ON")
+                else:
+                    threshold_counter+=1
+        else:
+            if pre_check_data[0]['pump_status']=="OFF":
+                if threshold_counter>0:
+                    threshold_counter==0
+            else:
+                if threshold_counter<=0:
+                    changePumpStatus(iot_module_id,"OFF")
+                else:
+                    if pre_check_data[0]['pump_status']=="ON":
+                        threshold_counter-=1
+
         sensors_data.insert_one(sensors_data_instance)
         sensors_data_instance.pop("_id")
         sensors_data_instance.pop("iot_module_id")
